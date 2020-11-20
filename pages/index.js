@@ -3,9 +3,9 @@ import Link from 'next/link'
 import Date from '../components/date'
 import Layout, { siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
-import { getSortedPostsData } from '../lib/posts'
+import { getSortedPostsData, getSortedPostsDataExternal } from '../lib/posts'
 
-export default function Home({allPostsData}) {
+export default function Home({allPostsData, todosArray}) {
   return (
     <Layout home>
       <Head>
@@ -35,15 +35,29 @@ export default function Home({allPostsData}) {
           ))}
         </ul>
       </section>
+
+      <section>
+        <h2 className={utilStyles.headingLg}>Todos from <a href="https://jsonplaceholder.typicode.com" target="blank"><strong>jsonplaceholder</strong></a></h2>
+        <ul >
+        {todosArray.map(({ id, completed, title }) => (
+            <li className={utilStyles.listItem} key={id}>
+                {title} |  {completed ? <span>Completed</span> : <span>Still to do</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
     </Layout>
   )
 }
 
 export async function getStaticProps() {
   const allPostsData = getSortedPostsData()
+  const todosArray = await getSortedPostsDataExternal();
+  console.log(todosArray);
   return {
     props: {
-      allPostsData
+      allPostsData,
+      todosArray
     }
   }
 }
